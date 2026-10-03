@@ -1,75 +1,185 @@
 /* =========================================================
    SLAAN — Sri Lalitha Annapoorneshwari Aradhana Nilayam
-   Main Website JavaScript
+   V1 Website JavaScript
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const darshanScreen = document.querySelector(".darshan-screen");
-    const templeDoors = document.querySelector(".temple-doors");
-    const ammaDarshan = document.querySelector(".amma-darshan");
-    const site = document.querySelector(".site");
+    const loader = document.querySelector(".loader");
+    const darshan = document.querySelector(".darshan");
+    const enterButton = document.querySelector("#enter");
+    const home = document.querySelector(".home");
 
-    /*
-     * Opening sequence:
-     *
-     * 1. Amma's call is displayed.
-     * 2. Temple doors slowly open.
-     * 3. Amma's darshan is revealed.
-     * 4. Main website becomes visible.
-     */
+    const menuButton = document.querySelector("#menu");
+    const nav = document.querySelector("#nav");
 
-    if (darshanScreen && templeDoors) {
+    const year = document.querySelector("#year");
 
-        setTimeout(() => {
-            templeDoors.classList.add("open");
-        }, 2500);
 
-        setTimeout(() => {
-            if (ammaDarshan) {
-                ammaDarshan.classList.add("visible");
-            }
-        }, 4300);
+    /* =====================================================
+       FOOTER YEAR
+       ===================================================== */
 
-        setTimeout(() => {
-            if (site) {
-                site.classList.add("visible");
-            }
-        }, 5600);
-
-        setTimeout(() => {
-            darshanScreen.classList.add("hidden");
-        }, 7200);
-    } else if (site) {
-
-        site.classList.add("visible");
+    if (year) {
+        year.textContent = new Date().getFullYear();
     }
 
-    /* ---------- MOBILE MENU ---------- */
 
-    const menuButton = document.querySelector(".menu-button");
-    const navLinks = document.querySelector(".nav-links");
+    /* =====================================================
+       INITIAL LOADER
+       ===================================================== */
 
-    if (menuButton && navLinks) {
+    setTimeout(() => {
+
+        if (loader) {
+            loader.classList.add("hide");
+        }
+
+    }, 900);
+
+
+    /* =====================================================
+       AMMA'S SANNIDHI — ENTER
+       ===================================================== */
+
+    function enterSannidhi() {
+
+        if (!darshan) return;
+
+        /*
+         * Opening the temple doors.
+         */
+
+        darshan.classList.add("open");
+
+
+        /*
+         * After the doors begin opening,
+         * reveal the main website.
+         */
+
+        setTimeout(() => {
+
+            if (home) {
+                home.classList.add("visible");
+            }
+
+        }, 1900);
+
+
+        /*
+         * Remove the opening screen completely
+         * after the darshan transition.
+         */
+
+        setTimeout(() => {
+
+            darshan.classList.add("exit");
+
+        }, 4000);
+
+    }
+
+
+    if (enterButton) {
+
+        enterButton.addEventListener(
+            "click",
+            enterSannidhi
+        );
+
+    }
+
+
+    /* =====================================================
+       AUTOMATIC OPENING
+       ===================================================== */
+
+    /*
+     * The visitor has the opportunity to read
+     * "అమ్మ పిలుస్తోంది…" before the doors open.
+     *
+     * The button remains available for immediate entry.
+     */
+
+    const automaticOpening = setTimeout(() => {
+
+        enterSannidhi();
+
+    }, 6500);
+
+
+    /*
+     * If the visitor enters manually,
+     * cancel the automatic sequence.
+     */
+
+    if (enterButton) {
+
+        enterButton.addEventListener("click", () => {
+
+            clearTimeout(automaticOpening);
+
+        }, { once: true });
+
+    }
+
+
+    /* =====================================================
+       MOBILE NAVIGATION
+       ===================================================== */
+
+    if (menuButton && nav) {
 
         menuButton.addEventListener("click", () => {
 
-            const isOpen = navLinks.classList.toggle("active");
+            const open = nav.classList.toggle("open");
 
             menuButton.setAttribute(
                 "aria-expanded",
-                isOpen ? "true" : "false"
+                open ? "true" : "false"
             );
+
         });
 
-        navLinks.querySelectorAll("a").forEach(link => {
+
+        /*
+         * Close the mobile menu after
+         * selecting a navigation item.
+         */
+
+        nav.querySelectorAll("a").forEach(link => {
 
             link.addEventListener("click", () => {
-                navLinks.classList.remove("active");
-                menuButton.setAttribute("aria-expanded", "false");
+
+                nav.classList.remove("open");
+
+                menuButton.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
             });
 
         });
+
     }
+
+
+    /* =====================================================
+       ESCAPE KEY
+       ===================================================== */
+
+    document.addEventListener("keydown", (event) => {
+
+        if (event.key === "Escape") {
+
+            if (nav) {
+                nav.classList.remove("open");
+            }
+
+        }
+
+    });
 
 });
